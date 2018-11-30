@@ -3,8 +3,8 @@ services:
        
   school:
     restart: always
-    build: ./school/school-web
-    working_dir: /school/school-web
+    build: ./school-parent/school-web
+    working_dir: /school-parent/school-web
     volumes:
       - ./school:/school
       - ~/.m2:/root/.m2
