@@ -1,0 +1,17 @@
+version: '3'
+services:
+       
+  school:
+    restart: always
+    build: ./school/school-web
+    working_dir: /school/school-web
+    volumes:
+      - ./school:/school
+      - ~/.m2:/root/.m2
+      - /docker/logs:/usr/local/logs
+    ports:
+      - "8081:8081"
+    command: mvn clean spring-boot:run
+  #  depends_on:
+ #     - nginx
+ #     - mysql
