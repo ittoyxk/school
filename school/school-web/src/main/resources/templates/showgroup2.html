@@ -1,0 +1,125 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>查看联系人分组</title>
+    <div th:replace="header :: html"></div>
+
+    <script src="js/bootstrap.js"></script>
+    <script src="js/proton.js"></script>
+    <script type="text/javascript" src="js/valida.2.1.6.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#version').valida('version');
+
+            $('.valida').valida();
+
+            //获得所要回显的值，此处为：100,1001,200,1400
+            var checkeds = $("#stu_id").val();
+            //拆分为字符串数组
+            var checkArray =checkeds.split(",");
+            //获得所有的复选框对象
+            var checkBoxAll = $("input[name='c_stu_name']");
+            //获得所有复选框（新闻,微信,论坛，问答，博客，平媒）的value值，然后，用checkArray中的值和他们比较，如果有，则说明该复选框被选中
+            for(var i=0;i<checkArray.length;i++){
+                //获取所有复选框对象的value属性，然后，用checkArray[i]和他们匹配，如果有，则说明他应被选中
+                $.each(checkBoxAll,function(j,checkbox){
+                    //获取复选框的value属性
+                    var checkValue=$(checkbox).val();
+                    if(checkArray[i]==checkValue){
+                        $(checkbox).attr("checked",true);
+                    }
+                })
+            }
+        });
+
+
+    </script>
+    <!-- //input-forms -->
+    <!--validator js-->
+    <script src="js/validator.min.js"></script>
+</head>
+<body class="dashboard-page">
+
+<div th:replace="menu :: html"></div>
+<section class="wrapper scrollable">
+    <nav class="user-menu">
+        <a href="javascript:;" class="main-menu-access">
+            <i class="icon-proton-logo"></i>
+            <i class="icon-reorder"></i>
+        </a>
+    </nav>
+
+    <div th:replace="search :: html"></div>
+
+    <div class="main-grid">
+        <div class="agile-grids">
+            <!-- validation -->
+            <div class="grids">
+                <div class="progressbar-heading grids-heading">
+                    <h2>
+                        查看分组
+                    </h2>
+                </div>
+
+                <div class="forms-grids">
+                    <div class="w3agile-validation">
+                        <div class="panel panel-widget agile-validation">
+                            <div class="my-div">
+                                <form class="valida">
+
+                                    <div class="input-info">
+                                        <h3>查看分组学生:</h3>
+                                    </div>
+
+                                    <label for="field-1" ><span style="font-size:14px;color:000000;">分组名称</span></label>
+                                    <div class="form-group" >
+                                        <input readonly="readonly" type="text" name="className" id="field-1" required="true" class="form-control" th:value="${groupContacts.groupName}">
+                                    </div>
+
+                                    <label for="selector1"><span style="font-size:14px;color:000000;">选择班级</span></label>
+                                    <div class="form-group">
+                                        <select name="selector1" id="selector1" class="form-control1" readonly="readonly">
+                                            <option th:each="cla : ${clazz}" th:value="${cla.id}" th:text="${cla.className}" th:selected="(${cla.id} == ${defaultFavorties})"></option>
+                                        </select>
+                                    </div>
+
+                                    <label ><span style="font-size:14px;color:000000;">选择学生</span></label>
+                                    <div class="form-group" id="f_stu">
+                                        <!--<div class="col-md-8">-->
+                                            <div class="input-group" th:each="stu : ${students}">
+                                                <div class="input-group-addon">
+                                                    <input type="checkbox" th:value="${stu.id}" th:id="${stu.id}" name="c_stu_name" readonly="readonly">
+                                                </div>
+                                                <input type="text" class="form-control1" readonly="readonly" th:value="${stu.stuName}">
+                                            </div>
+                                        <!--</div>-->
+                                    </div>
+                                    <input type="hidden" id="stu_id" th:value="${groupContacts.stuId}"/>
+                                    <hr>
+
+                                    <p>
+                                        <!--<input onclick="submit_add();" type="button" name="sub" value="确认修改" class="btn btn-primary">-->
+                                        <input type="reset" name="res-1" id="res-1" value="返回" class="btn btn-danger">
+                                    </p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- //validation -->
+        </div>
+    </div>
+    <!-- footer -->
+    <div class="footer">
+        <p>&copy; 2018 XIAOKANG❤XINGXING</p>
+    </div>
+    <!-- //footer -->
+</section>
+
+
+<!-- input-forms -->
+
+</body>
+</html>

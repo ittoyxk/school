@@ -1,0 +1,115 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>联系人列表</title>
+    <div th:replace="header :: html"></div>
+    <!-- tables -->
+    <link rel="stylesheet" type="text/css" href="css/table-style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/basictable.css"/>
+    <script type="text/javascript" src="js/jquery.basictable.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#table').basictable();
+        });
+
+        function del(id) {
+            if(confirm('确认删除吗？')){
+                $.ajax({
+                    type: "POST",
+                    url: "/group/del?id="+id,
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.rspCode == '000000') {
+                            alert('删除成功！');
+                            window.location.href = ("/findGroup");
+                        } else {
+                            alert(response.rspMsg);
+                        }
+                    }
+                });
+            }
+
+        }
+
+        function edit(id,gid){
+            window.location.href =("/updateGroup?id="+id+"&gid="+gid);
+        }
+
+        function chakan(gid) {
+            window.location.href =("/getGroup?gid="+gid);
+        }
+        
+        function send(id) {
+            window.location.href =("/tosms?gid="+id);
+        }
+    </script>
+    <!-- //tables -->
+
+</head>
+<body class="dashboard-page">
+
+<div th:replace="menu :: html"></div>
+
+<section class="wrapper scrollable">
+    <nav class="user-menu">
+        <a href="javascript:;" class="main-menu-access">
+            <i class="icon-proton-logo"></i>
+            <i class="icon-reorder"></i>
+        </a>
+    </nav>
+    <div th:replace="search :: html"></div>
+
+    <div class="main-grid">
+        <div class="agile-grids">
+            <!-- tables -->
+
+            <div class="table-heading">
+                <h2>联系人</h2>
+            </div>
+            <div class="agile-tables">
+                <div class="w3l-table-info">
+                    <!--<h3>Basic Implementation</h3>-->
+                    <table id="table">
+                        <thead>
+                        <tr>
+                            <th>班级名称</th>
+                            <th>分组名称</th>
+                            <th>分组人数</th>
+                            <th>分组创建时间</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="collectSimpleList">
+                        <tr th:each="gc,gStat : ${group}">
+                            <td><span th:text="${gc.className}"/></td>
+                            <td><span th:text="${gc.groupName}"/></td>
+                            <td><span th:text="${gc.counts}+'人'"/></td>
+                            <td><span th:text="${#dates.format(gc.createTime,'yyyy-MM-dd HH:mm:ss')}"/></td>
+                            <td><a  th:href="@{'#'}" th:onclick="'edit(' + ${gc.cid} + ','+${gc.gid}+');'">修改分组信息</a></td>
+                            <td><a href="javascript:void(0);" th:onclick="'del(' + ${gc.gid} + ');'">删除分组</a></td>
+                            <td><a  th:href="@{'#'}" th:onclick="'chakan('+${gc.gid}+');'">查看分组</a></td>
+                            <td><a  th:href="@{'#'}" th:onclick="'send(' + ${gc.gid} + ');'">发短信</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div th:replace="page :: html"></div>
+                </div>
+
+            </div>
+            <!-- //tables -->
+        </div>
+    </div>
+    <!-- footer -->
+    <div class="footer">
+        <p>&copy; 2018 XIAOKANG❤XINGXING</p>
+    </div>
+    <!-- //footer -->
+</section>
+<script th:src="@{js/bootstrap.js}"></script>
+<script th:src="@{js/proton.js}"></script>
+</body>
+
+</html>

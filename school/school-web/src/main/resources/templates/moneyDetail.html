@@ -1,0 +1,106 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>学生零用钱明细</title>
+    <div th:replace="header :: html"></div>
+    <!-- tables -->
+    <link rel="stylesheet" type="text/css" href="css/table-style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/basictable.css"/>
+    <script type="text/javascript" src="js/jquery.basictable.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#table').basictable();
+        });
+
+        function findStudent(id) {
+            window.location.href = ("/money?id=" + id);
+        }
+
+        function moneyDetailById(id) {
+            window.location.href = ("/moneyDetailById?id=" + id);
+        }
+
+    </script>
+    <!-- //tables -->
+
+</head>
+<body class="dashboard-page">
+
+<div th:replace="menu :: html"></div>
+
+<section class="wrapper scrollable">
+    <nav class="user-menu">
+        <a href="javascript:;" class="main-menu-access">
+            <i class="icon-proton-logo"></i>
+            <i class="icon-reorder"></i>
+        </a>
+    </nav>
+    <div th:replace="search :: html"></div>
+
+    <div class="main-grid">
+        <div class="agile-grids">
+            <!-- tables -->
+
+            <div class="table-heading">
+                <h2>学生零用钱明细</h2>
+            </div>
+            <div class="agile-tables">
+                <div class="w3l-table-info">
+                    <!--<h3>Basic Implementation</h3>-->
+                    <table id="table">
+                        <thead>
+                        <tr>
+                            <th>班级名称</th>
+                            <th>学生名称</th>
+                            <th>零用钱余额</th>
+                            <th>金额变化</th>
+                            <th>时间</th>
+                            <th>用途</th>
+                            <th>说明</th>
+                        </tr>
+                        </thead>
+                        <tbody id="collectSimpleList">
+                        <tr th:each="m,moneyStat : ${money}">
+                            <td><span th:text="${m.className}"/></td>
+                            <td>
+                                <a th:href="@{'#'}" th:onclick="'moneyDetailById(' + ${m.stuId} + ');'">
+                                    <span th:text="${m.stuName}"/>
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="@{'#'}" th:onclick="'findStudent(' + ${m.stuId} + ');'">
+                                    <span style="color: #2ecd71 ;font-weight:bold" th:if="${m.money > 0}" th:text="${m.money}"/>
+                                    <span style="color: #FF0000 ;font-weight:bold" th:if="${m.money <= 0}" th:text="${m.money}"/>
+                                    <span>元</span>
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="@{'#'}" th:onclick="'findStudent(' + ${m.stuId} + ');'">
+                                    <span style="color: #2ecd71 ;font-weight:bold" th:if="${m.flag == 1}" th:text="'+'+${m.moneyDetail}"/>
+                                    <span style="color: #FF0000;font-weight:bold" th:if="${m.flag == 0}" th:text="'-'+${m.moneyDetail}"></span>
+                                    <span>元</span>
+                                </a>
+                            </td>
+                            <td><span th:text="${#dates.format(m.createTime,'yyyy-MM-dd HH:mm:ss')}"/></td>
+                            <td><span th:text="${m.remark}"/></td>
+                            <td><span th:text="${m.content}"/></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div th:replace="page :: html"></div>
+                </div>
+
+            </div>
+            <!-- //tables -->
+        </div>
+    </div>
+    <!-- footer -->
+    <div class="footer">
+        <p>&copy; 2018 XIAOKANG❤XINGXING</p>
+    </div>
+    <!-- //footer -->
+</section>
+<script th:src="@{js/bootstrap.js}"></script>
+<script th:src="@{js/proton.js}"></script>
+</body>
+
+</html>

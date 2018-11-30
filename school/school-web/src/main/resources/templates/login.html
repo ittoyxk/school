@@ -1,0 +1,109 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>登录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content=""/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <!-- bootstrap-css -->
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <!-- //bootstrap-css -->
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel='stylesheet' type='text/css'/>
+    <!-- font CSS -->
+    <link href='css/fonts.googleapis.com.css' rel='stylesheet' type='text/css'/>
+    <!-- font-awesome icons -->
+    <link rel="stylesheet" href="css/font.css" type="text/css"/>
+    <link href="css/font-awesome.css" rel="stylesheet"/>
+    <!-- //font-awesome icons -->
+    <script src="js/jsencrypt.min.js"></script>
+</head>
+<body class="signup-body">
+<div class="agile-signup">
+
+    <div class="content2">
+        <div class="grids-heading gallery-heading signup-heading">
+            <h2>登录</h2>
+        </div>
+        <form id="form" >
+            <input type="text" name="userName" value="请输入用户名" id="userName" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '请输入用户名';}"/>
+            <input type="password" name="passWord" value="请输入密码" id="passWord" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '请输入密码';}"/>
+            <input type="button" class="register" value="登录" id="jsBtn" onclick="login()"/>
+        </form>
+        <!--        <div class="signin-text">
+                    <div class="text-left">
+                        <p><a href="#"> Forgot Password? </a></p>
+                    </div>
+                    <div class="text-right">
+                        <p><a href="signup.html"> Create New Account</a></p>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>-->
+        <h5>- OR -</h5>
+        <div class="footer-icons">
+            <ul>
+                <li><a href="#" class="twitter"><i class="fa fa-twitter"></i></a></li>
+                <li><a href="#" class="twitter facebook"><i class="fa fa-facebook"></i></a></li>
+                <li><a href="#" class="twitter chrome"><i class="fa fa-google-plus"></i></a></li>
+                <li><a href="#" class="twitter dribbble"><i class="fa fa-dribbble" aria-hidden="true"></i></a></li>
+            </ul>
+        </div>
+        <!--<a href="index.html">Back To Home</a>-->
+    </div>
+
+    <!-- footer -->
+    <div class="copyright">
+        <p>&copy; 2018 XIAOKANG❤XINGXING</p>
+    </div>
+    <!-- //footer -->
+
+</div>
+
+</body>
+<script th:src="@{js/jquery1.9.1.min.js}"></script>
+
+<script th:inline="javascript">
+    function login() {
+        var uname = $("#userName").val();
+        var pwd = $("#passWord").val();
+        if (uname == "" || pwd == "" || uname == undefined || pwd == undefined|| uname == null || pwd == null) {
+            alert('用户名或密码为空！');
+        } else {
+            var crypt = new JSEncrypt();
+            crypt.setPublicKey("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDB2oTsY4BnmZRWZK4xD+knFbz/fWOhiwvxbjrX3BJ92add9voRYU5L4HAoHvFYmh56HlDtHD/kvLf5n9XO87y67II97r1P5/Y6eL98z3gWE+QJaV42E0hFm8sJvA3y9n5dzS2AFVsxtu8AGVu8DM8TUcg4u0t0J7sh7PhAP5lknwIDAQAB");
+
+            var pwd2=crypt.encrypt(pwd);
+            var user = {};
+            user.userName=uname;
+            user.passWord=pwd2;
+            user.phone=uname;
+            var json = JSON.stringify(user);
+
+            $.ajax({
+                type: "POST",
+                url: "/user/login",
+                contentType: 'application/json;charset=utf-8',
+                data: json,
+                dataType: "json",
+                success: function(response){
+                    if (response.rspCode == '000000') {
+                        window.location.href = ("/index");
+                    } else {
+                        alert(response.rspMsg);
+                    }
+                }
+            });
+        }
+    }
+    $('#passWord').keydown(function (e) {
+        if (e.keyCode == 13) {
+            login();
+        }
+    });
+</script>
+</html>

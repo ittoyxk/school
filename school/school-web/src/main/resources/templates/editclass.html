@@ -1,0 +1,123 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>修改班级</title>
+	<div th:replace="header :: html"></div>
+	<script type="text/javascript" >
+        function submit_update() {
+            var uname = $("#field-1").val();
+            var pwd = $("#field-1-2").val();
+            var classid = $("#classid").val();
+            if (uname==''||pwd=='')
+                return false;
+            var clazz = {};
+            clazz.className=uname;
+            clazz.classAdmin=pwd;
+            clazz.id=classid;
+            var json = JSON.stringify(clazz);
+
+            $.ajax({
+                type: "POST",
+                url: "/class/update",
+                contentType: 'application/json;charset=utf-8',
+                data: json,
+                dataType: "json",
+                success: function(response){
+                    if (response.rspCode == '000000') {
+                        alert('修改成功');
+                        window.location.href = ("/class");
+                    } else {
+                        alert(response.rspMsg);
+                    }
+                }
+            });
+        }
+	</script>
+	<script src="js/bootstrap.js"></script>
+	<script src="js/proton.js"></script>
+	<script type="text/javascript" src="js/valida.2.1.6.min.js"></script>
+	<script type="text/javascript" >
+
+        $(document).ready(function() {
+
+            $('#version').valida( 'version' );
+
+            $('.valida').valida();
+        });
+
+
+
+	</script>
+	<!-- //input-forms -->
+	<!--validator js-->
+	<script src="js/validator.min.js"></script>
+</head>
+<body class="dashboard-page">
+
+<div th:replace="menu :: html"></div>
+	<section class="wrapper scrollable">
+		<nav class="user-menu">
+			<a href="javascript:;" class="main-menu-access">
+			<i class="icon-proton-logo"></i>
+			<i class="icon-reorder"></i>
+			</a>
+		</nav>
+
+		<div th:replace="search :: html"></div>
+
+		<div class="main-grid">
+			<div class="agile-grids">	
+				<!-- validation -->
+				<div class="grids">
+					<div class="progressbar-heading grids-heading">
+						<h2>
+							修改班级信息
+						</h2>
+					</div>
+					
+					<div class="forms-grids">
+						<div class="w3agile-validation">
+							<div class="panel panel-widget agile-validation">
+								<div class="my-div">
+									<form   class="valida" >
+
+										<div class="input-info">
+											<h3>输入班级信息:</h3>
+										</div>
+
+										<label for="field-1" ><span style="font-size:14px;color:000000;">班级名称</span></label>
+										<div class="form-group" >
+											<input type="text" name="className" id="field-1" required="true" class="form-control" th:value="${clazz.className}">
+										</div>
+
+										<label for="field-1-2"><span style="font-size:14px;color:000000;">班主任</span></label>
+										<div class="form-group" >
+											<input type="text" name="classAdmin" id="field-1-2" required="true" class="form-control" th:value="${clazz.classAdmin}">
+										</div>
+
+										<hr>
+										<input type="hidden" id="classid" th:value="${clazz.id}">
+										<p>
+											<input onclick="submit_update();" type="button" name="sub" value="确认修改" class="btn btn-primary">
+											<input type="reset" name="res-1" id="res-1" value="Reset" class="btn btn-danger">
+										</p>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- //validation -->
+			</div>
+		</div>
+		<!-- footer -->
+		<div class="footer">
+			<p>&copy; 2018 XIAOKANG❤XINGXING</p>
+		</div>
+		<!-- //footer -->
+	</section>
+
+	
+	<!-- input-forms -->
+
+</body>
+</html>

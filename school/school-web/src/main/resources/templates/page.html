@@ -1,0 +1,13 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<nav>
+    <ul class="pagination">
+        <li><a th:href="@{{uri}(uri=${uri},id=${id},stuName=${stuName})}" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+        <li><a th:href="@{{uri}(uri=${uri},id=${id},stuName=${stuName})}">1</a></li>
+        <li><a th:href="@{{uri}(uri=${uri},id=${id},stuName=${stuName},page='1')}">2</a></li>
+        <li><a th:href="@{{uri}(uri=${uri},id=${id},stuName=${stuName},page='2')}">3</a></li>
+        <li><a th:href="@{{uri}(uri=${uri},id=${id},stuName=${stuName},page='3')}">4</a></li>
+        <li><a th:href="@{{uri}(uri=${uri},id=${id},stuName=${stuName},page='4')}">5</a></li>
+        <li><a th:href="@{{uri}(uri=${uri},id=${id},stuName=${stuName},page=${page})}" aria-label="Previous"><span aria-hidden="true">»</span></a></li>
+    </ul>
+</nav>
+</html>

@@ -1,0 +1,169 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>修改学生</title>
+    <div th:replace="header :: html"></div>
+    <script type="text/javascript">
+        function submit_add() {
+            var name = $("#field-1").val();
+            var code = $("#field-1-2").val();
+
+            var classid = $("#selector1").val();
+            var jiaz = $("#field-1-3").val();
+            var phone = $("#field-1-4").val();
+            var sex = $('input:radio:checked').val();
+
+            var  stu_id=$("#stu_id").val();
+
+            if(name==''||code==''||jiaz==''||phone=='')
+            {
+                return false;
+            }
+
+            var stu = {};
+            stu.stuName = name;
+            stu.stuCode = code;
+            stu.classId = classid;
+            stu.sex = sex;
+            stu.jiazhang = jiaz;
+            var crypt = new JSEncrypt();
+            crypt.setPublicKey("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDB2oTsY4BnmZRWZK4xD+knFbz/fWOhiwvxbjrX3BJ92add9voRYU5L4HAoHvFYmh56HlDtHD/kvLf5n9XO87y67II97r1P5/Y6eL98z3gWE+QJaV42E0hFm8sJvA3y9n5dzS2AFVsxtu8AGVu8DM8TUcg4u0t0J7sh7PhAP5lknwIDAQAB");
+
+            var phone2=crypt.encrypt(phone);
+            stu.phone = phone;
+            stu.id=stu_id;
+            var json = JSON.stringify(stu);
+
+            $.ajax({
+                type: "POST",
+                url: "/stu/update",
+                contentType: 'application/json;charset=utf-8',
+                data: json,
+                dataType: "json",
+                success: function (response) {
+                    if (response.rspCode == '000000') {
+                        alert('修改成功');
+                        $("#field-1").val('');
+                        $("#field-1-2").val('');
+                        $("#field-1-3").val('');
+                        $("#field-1-4").val('');
+                        window.location.href = ("/findById?id="+stu_id);
+                    } else {
+                        alert(response.rspMsg);
+                    }
+                }
+            });
+        }
+    </script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/proton.js"></script>
+    <script type="text/javascript" src="js/valida.2.1.6.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#version').valida('version');
+
+            $('.valida').valida();
+        });
+
+
+    </script>
+    <!-- //input-forms -->
+    <!--validator js-->
+    <script src="js/validator.min.js"></script>
+</head>
+<body class="dashboard-page">
+
+<div th:replace="menu :: html"></div>
+<section class="wrapper scrollable">
+    <nav class="user-menu">
+        <a href="javascript:;" class="main-menu-access">
+            <i class="icon-proton-logo"></i>
+            <i class="icon-reorder"></i>
+        </a>
+    </nav>
+
+    <div th:replace="search :: html"></div>
+
+    <div class="main-grid">
+        <div class="agile-grids">
+            <!-- validation -->
+            <div class="grids">
+                <div class="progressbar-heading grids-heading">
+                    <h2>
+                        修改学生
+                    </h2>
+                </div>
+
+                <div class="forms-grids">
+                    <div class="w3agile-validation">
+                        <div class="panel panel-widget agile-validation">
+                            <div class="my-div">
+                                <form class="valida">
+
+                                    <div class="input-info">
+                                        <h3>输入学生信息:</h3>
+                                    </div>
+
+                                    <label for="selector1"><span style="font-size:14px;color:000000;">选择班级</span></label>
+                                    <div class="form-group">
+                                        <select name="selector1" id="selector1" class="form-control1">
+                                            <option th:each="cla : ${clazz}" th:value="${cla.id}" th:text="${cla.className}" th:selected="(${cla.id} == ${defaultFavorties})"></option>
+                                        </select>
+                                    </div>
+
+                                    <label for="field-1"><span style="font-size:14px;color:000000;">学生姓名</span></label>
+                                    <div class="form-group">
+                                        <input type="text" name="stuName" id="field-1" required="true" class="form-control" th:value="${stu.stuName}">
+                                    </div>
+
+                                    <label for="field-1-2"><span style="font-size:14px;color:000000;">学号</span></label>
+                                    <div class="form-group">
+                                        <input type="text" name="classAdmin" id="field-1-2" required="true" class="form-control" th:value="${stu.stuCode}">
+                                    </div>
+
+                                    <label for="radio"><span style="font-size:14px;color:000000;">性别</span></label>
+                                    <div class="form-group">
+                                        <div class="radio-inline"><label><input type="radio" value="0" name="sex" th:checked="${stu.sex eq 0 }" >女</label></div>
+                                        <div class="radio-inline"><label><input type="radio"   name="sex" value="1" th:checked="${stu.sex eq 1 }" >男</label></div>
+                                    </div>
+
+
+                                    <label for="field-1-3"><span style="font-size:14px;color:000000;">家长姓名</span></label>
+                                    <div class="form-group">
+                                        <input type="text" name="classAdmin" id="field-1-3" required="true" class="form-control" th:value="${stu.jiazhang}">
+                                    </div>
+
+                                    <label for="field-1-4"><span style="font-size:14px;color:000000;">电话</span></label>
+                                    <div class="form-group">
+                                        <input type="number"  name="classAdmin" id="field-1-4" required="true" class="form-control" th:value="${stu.phone}">
+                                    </div>
+
+                                    <hr>
+
+                                    <input type="hidden" id="stu_id" th:value="${stu.id}"/>
+                                    <p>
+                                        <input onclick="submit_add();" type="button" name="sub" value="确认修改" class="btn btn-primary">
+                                        <input type="reset" name="res-1" id="res-1" value="Reset" class="btn btn-danger">
+                                    </p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- //validation -->
+        </div>
+    </div>
+    <!-- footer -->
+    <div class="footer">
+        <p>&copy; 2018 XIAOKANG❤XINGXING</p>
+    </div>
+    <!-- //footer -->
+</section>
+
+
+<!-- input-forms -->
+
+</body>
+</html>

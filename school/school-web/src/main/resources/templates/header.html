@@ -1,0 +1,78 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="" />
+
+<script type="application/x-javascript"> addEventListener("load", function () {
+    setTimeout(hideURLbar, 0);
+}, false);
+function hideURLbar() {
+    window.scrollTo(0, 1);
+} </script>
+<!-- bootstrap-css -->
+<link rel="stylesheet"  href="css/bootstrap.css">
+<!-- //bootstrap-css -->
+<!-- Custom CSS -->
+<link href="css/style.css" rel='stylesheet' type='text/css'/>
+<!-- font CSS -->
+<link href='css/fonts.googleapis.com.css' rel='stylesheet' type='text/css'>
+<!-- font-awesome icons -->
+<link rel="stylesheet" href="css/font.css" type="text/css"/>
+<link href="css/font-awesome.css" rel="stylesheet">
+<!-- //font-awesome icons -->
+<script>
+    (function () {
+        var js;
+        if (typeof JSON !== 'undefined' && 'querySelector' in document && 'addEventListener' in window) {
+            js = 'js/jquery.min.js';
+        } else {
+            js = 'js/jquery.min.js';
+        }
+        document.write('<script src="' + js + '"><\/script>');
+    }());
+</script>
+<script src="js/modernizr.js"></script>
+<script src="js/jquery.cookie.js"></script>
+<script src="js/screenfull.js"></script>
+<script src="js/jsencrypt.min.js"></script>
+<script>
+    $(function () {
+        $('#supported').text('Supported/allowed: ' + !!screenfull.enabled);
+
+        if (!screenfull.enabled) {
+            return false;
+        }
+
+
+        $('#toggle').click(function () {
+            screenfull.toggle($('#container')[0]);
+        });
+    });
+</script>
+<!-- charts -->
+<script src="js/raphael-min.js"></script>
+<script src="js/morris.js"></script>
+<link rel="stylesheet" href="css/morris.css">
+<!-- //charts -->
+<!--skycons-icons-->
+<script src="js/skycons.js"></script>
+<!--//skycons-icons-->
+<script th:src="@{js/jquery1.9.1.min.js}"></script>
+<script th:inline="javascript">
+    function logout() {
+        $.ajax({
+            type: "POST",
+            url: "/user/logout",
+            contentType: 'application/json;charset=utf-8',
+            dataType: "json",
+            success: function (response) {
+                if (response.rspCode == '000000') {
+                    window.location.href = ("/login");
+                } else {
+                    alert(response.rspMsg);
+                }
+            }
+        });
+    }
+</script>
+</html>

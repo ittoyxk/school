@@ -1,0 +1,169 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>学生个人存款</title>
+    <div th:replace="header :: html"></div>
+    <script type="text/javascript">
+        function submit_add() {
+            var money = $("#field-1").val();
+            var remark = $("#remark").val();
+
+            var flag = $('input:radio:checked').val();
+
+            var student_id = $("#student_id").val();
+
+            if (money == '') {
+                return false;
+            }
+            var moneyd = {};
+            moneyd.stuId = student_id;
+            var crypt = new JSEncrypt();
+            crypt.setPublicKey("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDB2oTsY4BnmZRWZK4xD+knFbz/fWOhiwvxbjrX3BJ92add9voRYU5L4HAoHvFYmh56HlDtHD/kvLf5n9XO87y67II97r1P5/Y6eL98z3gWE+QJaV42E0hFm8sJvA3y9n5dzS2AFVsxtu8AGVu8DM8TUcg4u0t0J7sh7PhAP5lknwIDAQAB");
+
+            var money2=crypt.encrypt(money);
+            moneyd.money = money2;
+            moneyd.flag = flag;
+            moneyd.remark = remark;
+            var json = JSON.stringify(moneyd);
+
+            $.ajax({
+                type: "POST",
+                url: "/money/update",
+                contentType: 'application/json;charset=utf-8',
+                data: json,
+                dataType: "json",
+                success: function (response) {
+                    if (response.rspCode == '000000') {
+                        if (flag == '1')
+                            alert('成功存入' + money + '元');
+                        else if (flag == '0')
+                            alert('成功取出' + money + '元');
+                        window.location.href = ("/findById?id=" + student_id);
+                    } else {
+                        alert(response.rspMsg);
+                    }
+                }
+            });
+        }
+
+        function setSubvalue() {
+            var flag = $('input:radio:checked').val();
+            if (flag == '1') {
+                var classid = $("#sub_id").val('确认存钱');
+            } else {
+                var classid = $("#sub_id").val('确认取钱');
+            }
+        }
+    </script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/proton.js"></script>
+    <script type="text/javascript" src="js/valida.2.1.6.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#version').valida('version');
+
+            $('.valida').valida();
+        });
+
+
+    </script>
+    <!-- //input-forms -->
+    <!--validator js-->
+    <script src="js/validator.min.js"></script>
+</head>
+<body class="dashboard-page">
+
+<div th:replace="menu :: html"></div>
+<section class="wrapper scrollable">
+    <nav class="user-menu">
+        <a href="javascript:;" class="main-menu-access">
+            <i class="icon-proton-logo"></i>
+            <i class="icon-reorder"></i>
+        </a>
+    </nav>
+
+    <div th:replace="search :: html"></div>
+
+    <div class="main-grid">
+        <div class="agile-grids">
+            <!-- validation -->
+            <div class="grids">
+                <div class="progressbar-heading grids-heading">
+                    <h2>
+                        学生个人存款
+                    </h2>
+                </div>
+
+                <div class="forms-grids">
+                    <div class="w3agile-validation">
+                        <div class="panel panel-widget agile-validation">
+                            <div class="my-div">
+                                <form class="valida">
+
+                                    <div class="input-info">
+                                        <h4>
+                                            <span th:text="${stu.stuName}+'的余额为：'"></span>
+                                            <span style="color: #2ecd71" th:if="${pinMoney!=null and pinMoney.money > 0}" th:text="${pinMoney.money}"/>
+                                            <span style="color: #FF0000" th:if="${pinMoney==null or pinMoney.money ==null}">0</span>
+                                            <span style="color: #FF0000 ;font-weight:bold" th:if="${pinMoney!=null and pinMoney.money!=null and pinMoney.money le 0}">
+                                                <span th:text="${pinMoney.money}"></span>
+                                            </span>
+                                            <span>元</span>
+                                        </h4>
+                                    </div>
+
+                                    <div class="form-group"></div>
+                                    <div class="form-group"></div>
+
+                                    <label for="field-1"><span style="font-size:14px;color:000000;">输入金额</span></label>
+                                    <div class="form-group">
+                                        <input type="number" name="points" min="0" step="0.01" id="field-1" required="true" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="radio">
+                                            <label style="color: #1e252f" onclick="setSubvalue();">
+                                                <input type="radio" name="gender" required="" value="1" checked="checked">
+                                                存钱
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label style="color: #1e252f" onclick="setSubvalue();">
+                                                <input type="radio" name="gender" required="" value="0">
+                                                取钱
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <label for="remark"><span style="font-size:14px;color:000000;">输入用途</span></label>
+                                    <div class="form-group">
+                                        <input type="text" name="points" id="remark" required="true" class="form-control">
+                                    </div>
+                                    <hr>
+
+                                    <input type="hidden" id="student_id" th:value="${stu.id}"/>
+                                    <p>
+                                        <input onclick="submit_add();" type="button" name="sub" value="确认存钱" class="btn btn-primary" id="sub_id">
+                                        <input type="reset" name="res-1" id="res-1" value="Reset" class="btn btn-danger">
+                                    </p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- //validation -->
+        </div>
+    </div>
+    <!-- footer -->
+    <div class="footer">
+        <p>&copy; 2018 XIAOKANG❤XINGXING</p>
+    </div>
+    <!-- //footer -->
+</section>
+
+
+<!-- input-forms -->
+
+</body>
+</html>

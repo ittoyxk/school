@@ -1,0 +1,139 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>学生列表</title>
+    <div th:replace="header :: html"></div>
+    <!-- tables -->
+    <link rel="stylesheet" type="text/css" href="css/table-style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/basictable.css"/>
+    <script type="text/javascript" src="js/jquery.basictable.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#table').basictable();
+        });
+
+        function del(id) {
+            if (confirm('确认删除吗？')) {
+                $.ajax({
+                    type: "POST",
+                    url: "/stu/del?id=" + id,
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.rspCode == '000000') {
+                            alert('删除成功！');
+                            location.reload();
+                        } else {
+                            alert(response.rspMsg);
+                        }
+                    }
+                });
+            }
+
+        }
+
+        function edit(id) {
+            window.location.href = ("/editStudents?id=" + id);
+        }
+
+        function findStudent(id) {
+            window.location.href = ("/money?id=" + id);
+        }
+
+        function moneyDetailById(id) {
+            window.location.href = ("/moneyDetailById?id=" + id);
+        }
+    </script>
+    <!-- //tables -->
+
+</head>
+<body class="dashboard-page">
+
+<div th:replace="menu :: html"></div>
+
+<section class="wrapper scrollable">
+    <nav class="user-menu">
+        <a href="javascript:;" class="main-menu-access">
+            <i class="icon-proton-logo"></i>
+            <i class="icon-reorder"></i>
+        </a>
+    </nav>
+    <div th:replace="search :: html"></div>
+
+    <div class="main-grid">
+        <div class="agile-grids">
+            <!-- tables -->
+
+            <div class="table-heading">
+                <h2>学生信息</h2>
+            </div>
+
+
+            <div class="agile-tables">
+                <div class="w3l-table-info">
+                    <!--<h3>Basic Implementation</h3>-->
+                    <table id="table">
+                        <thead>
+                        <tr>
+                            <th>班级名称</th>
+                            <th>班主任</th>
+                            <th>学号</th>
+                            <th>学生姓名</th>
+                            <th>性别</th>
+                            <th>家长姓名</th>
+                            <th>家长电话</th>
+                            <th>添加时间</th>
+                            <th>零花钱</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="collectSimpleList">
+                        <tr th:each="student,studentStat : ${students}">
+                            <td><span th:text="${student.className}"/></td>
+                            <td><span th:text="${student.classAdmin}"/></td>
+                            <td><span th:text="${student.stuCode}"/></td>
+                            <td>
+                                <a th:href="@{'#'}" th:onclick="'moneyDetailById(' + ${student.id} + ');'">
+                                    <span th:text="${student.stuName}"/>
+                                </a>
+                            </td>
+                            <td>
+                                <span th:if="${student.sex == 1}">男</span>
+                                <span th:if="${student.sex == 0}">女</span>
+                            </td>
+                            <td><span th:text="${student.jiazhang}"/></td>
+                            <td><span th:text="${student.phone}"/></td>
+                            <td><span th:text="${#dates.format(student.createTime,'yyyy-MM-dd HH:mm:ss')}"/></td>
+                            <td>
+                                <a th:href="@{'#'}" th:onclick="'findStudent(' + ${student.id} + ');'">
+                                    <span style="color: #FF0000;font-weight:bold" th:if="${student.money ==null}">0</span>
+                                    <span style="color: #2ecd71 ;font-weight:bold" th:if="${student.money > 0}" th:text="${student.money}"/>
+                                    <span style="color: #FF0000 ;font-weight:bold" th:if="${student.money!=null and student.money le 0}">
+                                        <span th:text="${student.money}"></span>
+                                    </span>
+                                    <span>元</span>
+                                </a>
+                            </td>
+                            <td><a th:href="@{'#'}" th:onclick="'edit(' + ${student.id} + ');'">修改学生信息</a></td>
+                            <td><a href="javascript:void(0);" th:onclick="'del(' + ${student.id} + ');'">删除学生</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div th:replace="page :: html"></div>
+                </div>
+
+            </div>
+            <!-- //tables -->
+        </div>
+    </div>
+    <!-- footer -->
+    <div class="footer">
+        <p>&copy; 2018 XIAOKANG❤XINGXING</p>
+    </div>
+    <!-- //footer -->
+</section>
+<script th:src="@{js/bootstrap.js}"></script>
+<script th:src="@{js/proton.js}"></script>
+</body>
+
+</html>

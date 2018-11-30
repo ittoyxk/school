@@ -1,0 +1,204 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>修改联系人分组</title>
+    <div th:replace="header :: html"></div>
+    <script type="text/javascript">
+        function submit_add() {
+            var classid = $("#selector1").val();
+            var name = $("#field-1").val();
+            var group_id=$("#group_id").val();
+
+            if (name == '') {
+                alert("填写分组名称");
+                return false;
+            }
+
+            var arr = new Array();
+            $("input:checkbox:checked").each(function (i) {
+                arr[i] = $(this).val();
+//                alert(arr[i]);
+            });
+            var vals = arr.join(",");
+//            alert(vals);
+            if (vals == null || vals == '') {
+                alert("请选择学生");
+                return false;
+            }
+
+            var group = {};
+            group.groupName = name;
+            group.classId = classid;
+            group.stuId = vals;
+            group.id = group_id;
+
+            var json = JSON.stringify(group);
+
+            $.ajax({
+                type: "POST",
+                url: "/group/update",
+                contentType: 'application/json;charset=utf-8',
+                data: json,
+                dataType: "json",
+                success: function (response) {
+                    if (response.rspCode == '000000') {
+                        alert('修改成功');
+                        window.location.href = ("/findGroup");
+                    } else {
+                        alert(response.rspMsg);
+                    }
+                }
+            });
+        }
+
+        function change() {
+            var classid = $("#selector1").val();
+//            window.location.href=("/getStudentByCid?id="+classid);
+            var f_stu = $("#f_stu");
+
+            $.ajax({
+                type: "POST",
+                url: "/group/getStudentByCid",
+                contentType: 'application/json;charset=utf-8',
+                data: classid,
+                dataType: "json",
+                success: function (response) {
+                    if (response.rspCode == '000000') {
+                        var stu_html="";
+                        $.each(response.data, function () {
+                            var stu = "<div class=\"input-group\" >" +
+                                "<div class=\"input-group-addon\">" +
+                                "<input type=\"checkbox\" value=\""+this.id+"\" id=\""+this.id+"\"/>" +
+                                "</div>" +
+                                "<input type=\"text\" class=\"form-control1\" readonly=\"readonly\" value=\""+this.stuName+"\"/>" +
+                                "</div>";
+                            stu_html=stu_html+stu;
+                        });
+                        f_stu.html(stu_html);
+                    } else {
+                        f_stu.html(" <hr>没有学生可选！");
+                    }
+                }
+            });
+        }
+    </script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/proton.js"></script>
+    <script type="text/javascript" src="js/valida.2.1.6.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#version').valida('version');
+
+            $('.valida').valida();
+
+            //获得所要回显的值，此处为：100,1001,200,1400
+            var checkeds = $("#stu_id").val();
+            //拆分为字符串数组
+            var checkArray =checkeds.split(",");
+            //获得所有的复选框对象
+            var checkBoxAll = $("input[name='c_stu_name']");
+            //获得所有复选框（新闻,微信,论坛，问答，博客，平媒）的value值，然后，用checkArray中的值和他们比较，如果有，则说明该复选框被选中
+            for(var i=0;i<checkArray.length;i++){
+                //获取所有复选框对象的value属性，然后，用checkArray[i]和他们匹配，如果有，则说明他应被选中
+                $.each(checkBoxAll,function(j,checkbox){
+                    //获取复选框的value属性
+                    var checkValue=$(checkbox).val();
+                    if(checkArray[i]==checkValue){
+                        $(checkbox).attr("checked",true);
+                    }
+                })
+            }
+        });
+
+
+    </script>
+    <!-- //input-forms -->
+    <!--validator js-->
+    <script src="js/validator.min.js"></script>
+</head>
+<body class="dashboard-page">
+
+<div th:replace="menu :: html"></div>
+<section class="wrapper scrollable">
+    <nav class="user-menu">
+        <a href="javascript:;" class="main-menu-access">
+            <i class="icon-proton-logo"></i>
+            <i class="icon-reorder"></i>
+        </a>
+    </nav>
+
+    <div th:replace="search :: html"></div>
+
+    <div class="main-grid">
+        <div class="agile-grids">
+            <!-- validation -->
+            <div class="grids">
+                <div class="progressbar-heading grids-heading">
+                    <h2>
+                        修改分组
+                    </h2>
+                </div>
+
+                <div class="forms-grids">
+                    <div class="w3agile-validation">
+                        <div class="panel panel-widget agile-validation">
+                            <div class="my-div">
+                                <form class="valida">
+
+                                    <div class="input-info">
+                                        <h3>选择分组学生:</h3>
+                                    </div>
+
+                                    <label for="field-1" ><span style="font-size:14px;color:000000;">分组名称</span></label>
+                                    <div class="form-group" >
+                                        <input type="text" name="className" id="field-1" required="true" class="form-control" th:value="${groupContacts.groupName}">
+                                    </div>
+
+                                    <label for="selector1"><span style="font-size:14px;color:000000;">选择班级</span></label>
+                                    <div class="form-group">
+                                        <select name="selector1" id="selector1" class="form-control1" onchange="change();">
+                                            <option th:each="cla : ${clazz}" th:value="${cla.id}" th:text="${cla.className}" th:selected="(${cla.id} == ${defaultFavorties})"></option>
+                                        </select>
+                                    </div>
+
+                                    <label ><span style="font-size:14px;color:000000;">选择学生</span></label>
+                                    <div class="form-group" id="f_stu">
+                                        <!--<div class="col-md-8">-->
+                                            <div class="input-group" th:each="stu : ${students}">
+                                                <div class="input-group-addon">
+                                                    <input type="checkbox" th:value="${stu.id}" th:id="${stu.id}" name="c_stu_name">
+                                                </div>
+                                                <input type="text" class="form-control1" readonly="readonly" th:value="${stu.stuName}">
+                                            </div>
+                                        <!--</div>-->
+                                    </div>
+                                    <input type="hidden" id="stu_id" th:value="${groupContacts.stuId}"/>
+                                    <input type="hidden" id="group_id" th:value="${groupContacts.id}"/>
+                                    <hr>
+
+                                    <p>
+                                        <input onclick="submit_add();" type="button" name="sub" value="确认修改" class="btn btn-primary">
+                                        <input type="reset" name="res-1" id="res-1" value="返回" class="btn btn-danger">
+                                    </p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- //validation -->
+        </div>
+    </div>
+    <!-- footer -->
+    <div class="footer">
+        <p>&copy; 2018 XIAOKANG❤XINGXING</p>
+    </div>
+    <!-- //footer -->
+</section>
+
+
+<!-- input-forms -->
+
+</body>
+</html>
